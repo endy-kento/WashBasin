@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+#今のところ使い道なし
 import glob
 import os, commands
 import os.path
