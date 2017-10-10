@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+#重心を含めたヒートマップを画像として書き出す
 
 import glob
 import os, commands
@@ -20,27 +21,85 @@ class COG_FigClass:
 
     """補正後の個人データを画像出力"""
 
-#元のデータそのもののマスクを返す
-    def plot_COG(self,person,COGdata,mask,figSavePath):
-        line,clumn,count = person.shape
-        for counts in tqdm(range(count)):
+    def plot_Heatmap(self,Motion,COGdata,figSavePath):
+        line,column,frame = Motion.shape
+        mask = np.zeros([line,column])
 
+        for lines in range(line):
+            for columns in range(column):
+                for frames in range(frame):
+                    index = np.where(Motion[:,:,frames] > 0)
+                    mask[index[0],index[1]] = 1
 
-            fig, ax = plt.subplots(figsize=(25, 20))
-            sns.heatmap(person[:,:,counts], mask=mask[:,:,counts],vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
-            # ax.set_xticks(np.arange(person[:,:,0].shape[0]) + 0.5, minor=False)
-            # ax.set_yticks(np.arange(person[:,:,0].shape[1]) + 0.5, minor=False)
-            # ax.xaxis.tick_top()
-            # ax.set_xticklabels(np.arange(60), minor=False)
-            # ax.set_yticklabels(np.arange(60), minor=False)
-            plt.scatter(COGdata[counts,1],COGdata[counts,0], s=2500,c="yellow", marker="*",linewidths="2",edgecolors="orange")
-            plt.scatter(COGdata[counts,4],COGdata[counts,3], s=2500,c="red", marker="*",linewidths="2",edgecolors="orange")
-            plt.scatter(COGdata[counts,7],COGdata[counts,6], s=2500,c="green", marker="*",linewidths="2",edgecolors="orange")
-            plt.savefig(figSavePath+"/"+str(counts)+".png")
-            plt.close()
+                    fig, ax = plt.subplots(figsize=(25, 20))
+                    sns.heatmap(Motion[:,:,frames], mask=mask[:,:],vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
+                    # ax.set_xticks(np.arange(Motion[:,:,0].shape[0]) + 0.5, minor=False)
+                    # ax.set_yticks(np.arange(Motion[:,:,0].shape[1]) + 0.5, minor=False)
+                    # ax.xaxis.tick_top()
+                    # ax.set_xticklabels(np.arange(60), minor=False)
+                    # ax.set_yticklabels(np.arange(60), minor=False)
+                    plt.scatter(COGdata[frames,1],COGdata[frames,0], s=2500,c="yellow", marker="*",linewidths="2",edgecolors="orange")
+                    plt.scatter(COGdata[frames,4],COGdata[frames,3], s=2500,c="red", marker="*",linewidths="2",edgecolors="orange")
+                    plt.scatter(COGdata[frames,7],COGdata[frames,6], s=2500,c="green", marker="*",linewidths="2",edgecolors="orange")
+                    plt.savefig(figSavePath+"/"+str(frames)+".png")
+                    plt.close()
 
 if __name__ == '__main__':
     COGFCla= COG_FigClass()
+
+    #Row_Motion
+    npyPath_list = glob.glob('../npyGen/NPY/Motion_Data/*.npy')#'../npyGen/NPY/Motion_Data/Dentifrice.npy',...
+    for npyPath in tqdm(npyPath_list):#'../npyGen/NPY/Motion_Data/Dentifrice.npy',...
+
+        MotionSavePath = npyPath.replace('../npyGen/NPY/Motion_Data/','./Row_Motion/')#'./Row_Motion/Dentifrice.npy'...
+        MotionSavePath = MotionSavePath.replace('.npy','/Heatmap')#'./Row_Motion_COG/Dentifrice/Heatmap'...
+        COGPath = npyPath.replace('../npyGen/NPY/Motion_Data/','./Row_Motion_COG/')#'./Row_Motion_COG/Dentifrice.npy'...
+        COGPath = COGPath.replace('.npy','_COG.npy')#'./Row_Motion_COG/Dentifrice_COG.npy'...
+        if os.path.isdir(MotionSavePath) == False:#なければ保存用のディレクトリ作成
+            os.mkdir(MotionSavePath)#'./Row_Motion_COG/Dentifrice/Heatmap'...
+
+        Motiondata = np.load(npyPath)
+        COGdata = np.load(COGPath)
+        COGFCla.plot_Heatmap(Motiondata,COGdata,MotionSavePath)
+
+
+
+    # Cabed_Motion
+    MotionPath_list = glob.glob('./Cabed_Motion/*')#'./Cabed_Motion/Dentifrice'...
+    for MotionPath in tqdm(MotionPath_list):#'./Cabed_Motion/Dentifrice'...
+        npyPath_list = glob.glob(MotionPath+'/*.npy')#'Cabed_Motion/Dentifrice/cabed_all.npy'...
+        for npyPath in npyPath_list:#'Cabed_Motion/Dentifrice/cabed_all.npy'...
+            figSavePath = npyPath.replace('cabed_','')#'Cabed_Motion/Dentifrice/all.npy'...
+            figSavePath = figSavePath.replace('.npy','/Heatmap')#'Cabed_Motion/Dentifrice/all/Heatmap'...
+            COGPath = npyPath.replace('Cabed_Motion/','./Cabed_Motion_COG/')#'./Cabed_Motion_COG/Dentifrice/cabed_all.npy'...
+            COGPath = COGPath.replace('.npy','_COG.npy')#'./Row_Motion_COG/Dentifrice/cabed_all_COG.npy'...
+            if os.path.isdir(figSavePath) == False:#なければ保存用のディレクトリ作成
+                    os.mkdir(figSavePath)#'./Row_Motion_COG/Dentifrice/Heatmap'...
+            Motiondata = np.load(npyPath)
+            COGdata = np.load(COGPath)
+            COGFCla.plot_Heatmap(Motiondata,COGdata,figSavePath)
+
+
+
+
+    #Cabed_Motion//Dentifrice/ED44
+    MotionPath_list = glob.glob('./Cabed_Motion/*')#'./Cabed_Motion/Dentifrice'...
+    for MotionPath in tqdm(MotionPath_list):#'./Cabed_Motion/Dentifrice'...
+        EDPath_list = glob.glob(MotionPath+'/ED*')#'Cabed_Motion/Dentifrice/ED44'...
+        for EDPath in EDPath_list:#'Cabed_Motion/Dentifrice/ED44'...
+            npyPath_list = glob.glob(EDPath+'/*.npy')#'Cabed_Motion/Dentifrice/ED44/cabed_all.npy'...
+            for npyPath in npyPath_list:
+                figSavePath = npyPath.replace('cabed_','')#'Cabed_Motion/Dentifrice/ED44/all.npy'...
+                figSavePath = figSavePath.replace('.npy','/Heatmap')#'Cabed_Motion/Dentifrice/ED44/all/Heatmap'...
+                COGPath = npyPath.replace('Cabed_Motion/','./Cabed_Motion_COG/')#'./Cabed_Motion_COG/Dentifrice/ED44/cabed_all.npy'...
+                COGPath = COGPath.replace('.npy','_COG.npy')#'./Row_Motion_COG/Dentifrice/ED44/cabed_all_COG.npy'...
+                if os.path.isdir(figSavePath) == False:#なければ保存用のディレクトリ作成
+                        os.mkdir(figSavePath)#'./Row_Motion_COG/Dentifrice/ED44/Heatmap'...
+                Motiondata = np.load(npyPath)
+                COGdata = np.load(COGPath)
+                COGFCla.plot_Heatmap(Motiondata,COGdata,figSavePath)
+
+
 
     # DirPath_list = glob.glob('./ED*_Person')
     #

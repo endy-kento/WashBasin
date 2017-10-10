@@ -16,16 +16,16 @@ args = sys.argv
 
 if os.path.isdir('./NPY') == False:#なければ保存用のディレクトリ作成
     os.mkdir('./NPY')
-if os.path.isdir('./NPY/Person') == False:#なければ保存用のディレクトリ作成
-    os.mkdir('./NPY/Person')
-if os.path.isdir('./NPY/Dentifrice_Cleaned') == False:#なければ保存用のディレクトリ作成
-    os.mkdir('./NPY/Dentifrice_Cleaned')
+
+
 
 class NpyGenClass:
 
     """綺麗になった元データを連結させてnpy形式に変換"""
 
     def personNpyGen(self,NamePath_list):
+        if os.path.isdir('./NPY/Person') == False:#なければ保存用のディレクトリ作成
+            os.mkdir('./NPY/Person')
         npy_map = np.zeros([60, 60,10])#集約後の行列の初期化(平均)
         for NamePath in tqdm(NamePath_list):
             SaveNamePath = NamePath.replace('CSV','NPY')#'./NPY/Person/jyu,...
@@ -43,7 +43,8 @@ class NpyGenClass:
                 np.save(SaveTryPath+".npy", npy_map)
 
     def DentNpyGen(self,NamePath_list):
-
+        if os.path.isdir('./NPY/Dentifrice_Cleaned') == False:#なければ保存用のディレクトリ作成
+            os.mkdir('./NPY/Dentifrice_Cleaned')
         for NamePath in tqdm(NamePath_list):
             SaveNamePath = NamePath.replace('CSV','NPY')#'./NPY/Person/jyu,...
             CsvPath_list = glob.glob(NamePath+'/*')#'./CSV/Person/jyu/1,...
@@ -56,21 +57,23 @@ class NpyGenClass:
                 count=count+1
             np.save(SaveNamePath+".npy", npy_map)
 
-    def MotionNpyGen(self,NamePath_list,npySavePath):
+    def MotionNpyGen(self,NamePath_list):
+        if os.path.isdir('./NPY/Motion_Data') == False:#なければ保存用のディレクトリ作成
+            os.mkdir('./NPY/Motion_Data')
 
         for NamePath in tqdm(NamePath_list):#'./CSV/Cleaned_Motion_Data/Dentifrice',...
-            SaveNamePath = NamePath.replace('CSV','NPY')#'./NPY/Cleaned_Motion_Data/Dentifrice',...
-            CsvPath_list = glob.glob(NamePath+'/*')#'./NPY/Cleaned_Motion_Data/Dentifrice/CSP2156000000.csv',...
-            framelen = len(CsvPath_list)
-            npy_map = np.zeros([60, 60,filelen])#0で初期化したnpyファイルの雛形
+            SaveNamePath = NamePath.replace('CSV/Cleaned_','NPY/')#'./NPY/Motion_Data/Dentifrice',...
+            CsvPath_list = glob.glob(NamePath+'/*')#'./NPY/Motion_Data/Dentifrice/CSP2156000000.csv',...
+            framelen = len(CsvPath_list)#フレームの個数
+            npy_map = np.zeros([60, 60,framelen])#0で初期化したnpyファイルの雛形
             count = 0#フレーム数をカウント
-            for CsvPath in CsvPath_list:#'./NPY/Cleaned_Motion_Data/Dentifrice/CSP2156000000.csv',...
+            for CsvPath in CsvPath_list:#'./NPY/Motion_Data/Dentifrice/CSP2156000000.csv',...
                 data = np.loadtxt(CsvPath,delimiter=',')#対象のファイルを開く
                 npy_map[:,:,count] = data[:,:]
                 count=count+1
             np.save(SaveNamePath+".npy", npy_map)
 
-    def NpyGen(self,size,zLen,dirName,dirpath_list):
+    def SampleNpyGen(self,size,zLen,dirName,dirpath_list):
         if zLen == "10":
             npy_map = np.zeros([60, 60,10])#集約後の行列の初期化(平均)
         elif zLen == "100":
@@ -183,8 +186,8 @@ NpyGen = NpyGenClass()
 
 #50g/point
 # dirPath_list = glob.glob('./CSV/'+args[3]+'/*')#'./CSV/50gp/1-1',...
-# NpyGen.NpyGen(args[1],args[2],args[3],dirPath_list)
+# NpyGen.SampleNpyGen(args[1],args[2],args[3],dirPath_list)
 
 #Motion_Data
 dirPath_list = glob.glob('./CSV/Cleaned_Motion_Data/*')#'./CSV/Cleaned_Motion_Data/Dentifrice',...
-NpyGen.MotionNpyGen(args[1],args[2],args[3],dirPath_list)
+NpyGen.MotionNpyGen(dirPath_list)
