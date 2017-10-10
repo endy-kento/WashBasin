@@ -21,24 +21,23 @@ class CentorOfGravityClass:
         #対象のファイルと整形後のファイルを開く
         line,clumn,count = data.shape
         COG = np.zeros([count,9])#集約後の行列の初期化(平均)
-        # print data.shape
         row, col, count = data.shape
         for counts in tqdm(range(count)):
 
             for rows in range(row):
                 for cols in range(col):
 
-                    COG[counts,0] = COG[counts,0] + rows*float(data[rows][cols][counts])
-                    COG[counts,1] = COG[counts,1] + cols*float(data[rows][cols][counts])
+                    COG[counts,1] = COG[counts,1] + rows*fl　oat(data[rows][cols][counts])
+                    COG[counts,0] = COG[counts,0] + cols*float(data[rows][cols][counts])
                     COG[counts,2] = COG[counts,2] + float(data[rows][cols][counts])
 
                     if  col/2 >= cols:
-                        COG[counts,3] = COG[counts,3] + rows*float(data[rows][cols][counts])
-                        COG[counts,4] = COG[counts,4] + cols*float(data[rows][cols][counts])
+                        COG[counts,4] = COG[counts,4] + rows*float(data[rows][cols][counts])
+                        COG[counts,3] = COG[counts,3] + cols*float(data[rows][cols][counts])
                         COG[counts,5] = COG[counts,5] + float(data[rows][cols][counts])
                     else:
-                        COG[counts,6] = COG[counts,6] + rows*float(data[rows][cols][counts])
-                        COG[counts,7] = COG[counts,7] + cols*float(data[rows][cols][counts])
+                        COG[counts,7] = COG[counts,7] + rows*float(data[rows][cols][counts])
+                        COG[counts,6] = COG[counts,6] + cols*float(data[rows][cols][counts])
                         COG[counts,8] = COG[counts,8] + float(data[rows][cols][counts])
 
             if COG[counts,0] or COG[counts,1] or COG[counts,2] != 0:
@@ -101,7 +100,7 @@ if __name__ == '__main__':
     #Cabed_Motion//Dentifrice/ED44
     MotionPath_list = glob.glob('./Cabed_Motion/*')#'./Cabed_Motion/Dentifrice'...
     for MotionPath in MotionPath_list:#'./Cabed_Motion/Dentifrice'...
-        EDPath_list = glob.glob(MotionPath+'/*/')#'Cabed_Motion/Dentifrice/ED44'...
+        EDPath_list = glob.glob(MotionPath+'/ED*/')#'Cabed_Motion/Dentifrice/ED44'...
         for EDPath in EDPath_list:#'Cabed_Motion/Dentifrice/cabed_all.npy'...
             EDSavePath = EDPath.replace('Cabed_Motion/','Cabed_Motion_COG/')#'Cabed_Motion/Dentifrice/ED44'...
             if os.path.isdir(EDSavePath) == False:#なければ保存用のディレクトリ作成
@@ -110,6 +109,7 @@ if __name__ == '__main__':
             for npyPath in npyPath_list:
                 Motiondata = np.load(npyPath)
                 COGdata = COGCla.centorofgravity(Motiondata)
+
                 if 'all' in npyPath:
                     np.save(EDSavePath+"/cabed_all_COG.npy", COGdata)
                 elif 'rep' in npyPath:

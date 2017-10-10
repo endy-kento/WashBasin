@@ -14,6 +14,7 @@ import sys
 import seaborn as sns
 import cv2
 commands.getoutput("find . -name '.DS_Store' -type f -ls -delete")
+np.set_printoptions(threshold=np.inf)
 args = sys.argv
 
 
@@ -23,26 +24,27 @@ class COG_FigClass:
 
     def plot_Heatmap(self,Motion,COGdata,figSavePath):
         line,column,frame = Motion.shape
-        mask = np.zeros([line,column])
+        
 
-        for lines in range(line):
-            for columns in range(column):
-                for frames in range(frame):
-                    index = np.where(Motion[:,:,frames] > 0)
-                    mask[index[0],index[1]] = 1
+        for frames in range(frame):
+            mask = np.zeros([line,column])
+            mask[Motion[:,:,frames]==0] = 1
+            
 
-                    fig, ax = plt.subplots(figsize=(25, 20))
-                    sns.heatmap(Motion[:,:,frames], mask=mask[:,:],vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
-                    # ax.set_xticks(np.arange(Motion[:,:,0].shape[0]) + 0.5, minor=False)
-                    # ax.set_yticks(np.arange(Motion[:,:,0].shape[1]) + 0.5, minor=False)
-                    # ax.xaxis.tick_top()
-                    # ax.set_xticklabels(np.arange(60), minor=False)
-                    # ax.set_yticklabels(np.arange(60), minor=False)
-                    plt.scatter(COGdata[frames,1],COGdata[frames,0], s=2500,c="yellow", marker="*",linewidths="2",edgecolors="orange")
-                    plt.scatter(COGdata[frames,4],COGdata[frames,3], s=2500,c="red", marker="*",linewidths="2",edgecolors="orange")
-                    plt.scatter(COGdata[frames,7],COGdata[frames,6], s=2500,c="green", marker="*",linewidths="2",edgecolors="orange")
-                    plt.savefig(figSavePath+"/"+str(frames)+".png")
-                    plt.close()
+            fig, ax = plt.subplots(figsize=(25, 20))
+            # sns.heatmap(mask,vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
+            sns.heatmap(Motion[:,:,frames], mask=mask,vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
+            # sns.heatmap(Motion[:,:,frames],vmin=0, cmap='viridis',linecolor='black',linewidths=0.1)
+            # ax.set_xticks(np.arange(Motion[:,:,0].shape[0]) + 0.5, minor=False)
+            # ax.set_yticks(np.arange(Motion[:,:,0].shape[1]) + 0.5, minor=False)
+            # ax.xaxis.tick_top()
+            # ax.set_xticklabels(np.arange(60), minor=False)
+            # ax.set_yticklabels(np.arange(60), minor=False)
+            plt.scatter(COGdata[frames,0],COGdata[frames,1], s=2500,c="yellow", marker="*",linewidths="2",edgecolors="orange")
+            plt.scatter(COGdata[frames,3],COGdata[frames,2], s=2500,c="red", marker="*",linewidths="2",edgecolors="orange")
+            plt.scatter(COGdata[frames,6],COGdata[frames,7], s=2500,c="green", marker="*",linewidths="2",edgecolors="orange")
+            plt.savefig(figSavePath+"/"+str(frames)+".png")
+            plt.close()
 
 if __name__ == '__main__':
     COGFCla= COG_FigClass()

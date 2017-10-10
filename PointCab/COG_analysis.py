@@ -21,36 +21,34 @@ class COG_analysisClass:
 
     """時系列的にそれぞれの軸がどう遷移したか確認するための画像を出力する"""
 
-#元のデータそのもののマスクを返す
     def plot_COG_analysis(self,COGdata,figSavePath):
-
 
          frame,count = COGdata.shape
 
          for counts in range(count):
             if counts == 0:
-               axes = 'Y'
-            #    print axes+str(COGdata[100,counts])
-            elif counts == 1:
                axes = 'X'
             #    print axes+str(COGdata[100,counts])
+            elif counts == 1:
+               axes = 'Y'
+            #    print axes+str(COGdata[100,counts])
             elif counts == 3:
-               axes = 'LY'
+               axes = 'LX'
             #    print axes+str(COGdata[100,counts])
             #    print Y
             elif counts == 4:
-               axes = 'LX'
+               axes = 'LY'
             #    print axes+str(COGdata[100,counts])
             elif counts == 6:
-               axes = 'RY'
+               axes = 'RX'
             #    print axes+str(COGdata[100,counts])
             elif counts == 7:
-               axes = 'RX'
+               axes = 'RY'
             #    print axes+str(COGdata[100,counts])
 
             if counts ==2 or counts ==5 or counts ==8:
                 pass
-            elif counts ==0 or counts ==3 or counts ==6:
+            elif counts ==1 or counts ==4 or counts ==7:
                 Y = [item for item in COGdata[:,counts] if item]
                 frame = len(Y)
                 X=np.array(range(frame))
@@ -66,8 +64,6 @@ class COG_analysisClass:
                 plt.grid(True)
                 # plt.legend(fontsize=30)
                 plt.tick_params(labelsize=30)
-
-
 
                 if min(Y) > 29:
                     plt.fill_between(X,min(Y),max(Y),facecolor='b',alpha=0.3,label='bottom')
@@ -84,6 +80,8 @@ class COG_analysisClass:
                     plt.savefig(figSavePath+"/rep_"+axes+".png")
 
                 plt.close()
+
+
             else:
                 Y = [item for item in COGdata[:,counts] if item]
                 frame = len(Y)
@@ -100,8 +98,6 @@ class COG_analysisClass:
                 plt.grid(True)
                 # plt.legend(fontsize=30)
                 plt.tick_params(labelsize=30)
-
-
 
                 if min(Y) > 29:
                     plt.fill_between(X,min(Y),max(Y),facecolor='b',alpha=0.3,label='right')

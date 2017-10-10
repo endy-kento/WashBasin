@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-#個人の直立データに補正関数をかけたものをnpy形式と画像で出力する
+#個人の直立データに補正関数をかけたものをnpy形式で出力する
 #ex) python Calibration.py 1 new
 
 import glob
