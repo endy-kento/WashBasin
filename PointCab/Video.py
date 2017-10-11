@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
+from tqdm import tqdm
 import glob
+import os, commands
+import os.path
 import cv2
 import os, commands
+import sys
 commands.getoutput("find . -name '.DS_Store' -type f -ls -delete")
 
 def main():
