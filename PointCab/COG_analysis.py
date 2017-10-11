@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 #時系列的にそれぞれの軸がどう遷移したか確認するための画像を出力する
+#iirでのローパスフィルタを通した波形も生成可能
 
 from IIRFilter import IIRFilter
 import glob

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+#生の周波数成分と、iirでのハイパスフィルタを通した周波数成分も出力可能
 
 from IIRFilter import IIRFilter
 import glob
@@ -48,7 +49,7 @@ class Spectrogram_FigClass:
         # xlabel("time [second]")
         # ylabel("frequency [Hz]")
 
-        plt.savefig(figSavePath+"/Ana_3hpf_"+axse+".png")
+        plt.savefig(figSavePath+"/Ana_10lpf_spe_"+axse+".png")
 
         plt.close()
 
@@ -136,7 +137,8 @@ if __name__ == "__main__":
 
                     fs = 37
                     iir = IIRFilter()
-                    iir.hpf(3,fs)#3Hz以下をカット
+                    # iir.hpf(3,fs)#3Hz以下をカット
+                    iir.lpf(10,fs)#3Hz以下をカット
                     Sample = iir.iir(Sample)
 
 

@@ -47,6 +47,8 @@ class IIRFilter:
         self.a[1] = (8 * np.pi**2 * fc**2 - 2) / denom
         self.a[2] = (1 - (2 * np.sqrt(2) * np.pi * fc) + 4 * np.pi**2 * fc**2) / denom
 
+
+
     def bpf(self,cFreq1,cFreq2,fs):
         """
         BPF用の係数を作成する
