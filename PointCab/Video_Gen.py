@@ -14,15 +14,14 @@ args = sys.argv
 class Video_GenClass:
 
     def Video_Gen(self,AorRPath,pngPath_list):
-        if os.path.isdir(AorRPath+'/video.mp4') == True:#なければ保存用のディレクトリ作成
-            os.remove(AorRPath+'/video.mp4')
+        if os.path.isfile(AorRPath+'video.mp4') == True:#なければ保存用のディレクトリ作成
+            os.remove(AorRPath+'video.mp4')
         fs = 37.0
         fourcc = cv2.cv.CV_FOURCC('m','p','4','v')
-        video = cv2.VideoWriter(AorRPath+'/video.mp4', fourcc, fs, (640, 480))
+        video = cv2.VideoWriter(AorRPath+'video.mp4', fourcc, fs, (640, 480))
 
-        print range(len(pngPath_list))
         for i in tqdm(range(len(pngPath_list))):
-            img = cv2.imread(AorRPath+'/heatmap/'+str(i)+'.png')
+            img = cv2.imread(AorRPath+'/Heatmap/'+str(i)+'.png')
             img = cv2.resize(img, (640,480))
             video.write(img)
 
@@ -63,5 +62,5 @@ if __name__ == '__main__':
         for EDPath in EDPath_list:#'Cabed_Motion/Dentifrice/ED44'...
             AorRPath_list = glob.glob(EDPath+'/*/')#'Cabed_Motion/Dentifrice/ED44/all'...
             for AorRPath in AorRPath_list:
-                pngPath_list = AorRPath+'/heatmap/*.png'#'Cabed_Motion/Dentifrice/ED44/all/heatmap/0.png'...
+                pngPath_list = glob.glob(AorRPath+'/Heatmap/*.png')#'Cabed_Motion/Dentifrice/ED44/all/heatmap/0.png'...
                 VG.Video_Gen(AorRPath,pngPath_list)

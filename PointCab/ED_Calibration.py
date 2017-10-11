@@ -61,11 +61,10 @@ class ED_CalibrationClass:
                                 np.uint8)
 
         line,column,frame = Motion.shape
-        Gray_map = np.zeros([line,column])#元のデータを二値化
         ED_CabedMotion = np.zeros([line,column,frame])
         for frames in range(frame):
-            index = np.where(Motion[:,:,frames] > 0)
-            Gray_map[index[0],index[1]] = 1
+            Gray_map = np.zeros([line,column])#元のデータを二値化
+            Gray_map[Motion[:,:,frames]>0] = 1
 
 
             if ED == 44:
@@ -88,6 +87,7 @@ class ED_CalibrationClass:
                 E_Gray_map = cv2.erode(Gray_map,neiborhood8,iterations=1)
                 ED_Gray_map = cv2.dilate(E_Gray_map,neiborhood8,iterations=1)
                 ED_CabedMotion[:,:,frames] = Motion[:,:,frames]*ED_Gray_map[:,:]
+
 
         #save
         if os.path.isdir(npySavePath+"/ED"+str(ED)) == False:#なければ保存用のディレクトリ作成
